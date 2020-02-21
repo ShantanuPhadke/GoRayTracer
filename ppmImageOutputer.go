@@ -7,48 +7,56 @@ import (
 )
 
 func main() {
-	makeSimpleImage()
-	makeRainbowImage()
+	writeToFile("simple_image.ppm", makeSimpleImage())
+	writeToFile("rainbow_image.ppm", makeRainbowImage())
 }
 
-func makeSimpleImage() {
-	f, err := os.Create("simple_image.ppm")
+/* writeToFile ... Generalized function that just writes given content
+   to a given file
+		INPUTS:
+			filename = file name as a string
+			content = the content to write to the file as a string
+		OUTPUTS:
+			bool = Signifies whether or not the function was successful
+			error = Error (if any) that is returned by any operations
+*/
+func writeToFile(filename string, content string) (bool, error) {
+	f, err := os.Create(filename)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return false, err
 	}
+
+	l, err := f.WriteString(content)
+	if err != nil {
+		f.Close()
+		return false, err
+	}
+
+	fmt.Println(l, "bytes written successfully to", filename)
+
+	err = f.Close()
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func makeSimpleImage() string {
 	simpleImageString := ""
 	simpleImageString += "P3\n"
 	simpleImageString += "3 2\n"
 	simpleImageString += "255\n"
 	simpleImageString += "255 0 0\n0 255 0\n0 0 255\n"
 	simpleImageString += "255 255 0\n255 255 255\n0 0 0 "
-
-	l, err := f.WriteString(simpleImageString)
-	if err != nil {
-		fmt.Println(err)
-		f.Close()
-		return
-	}
-	fmt.Println(l, "bytes written successfully")
-	err = f.Close()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	return simpleImageString
 }
 
-func makeRainbowImage() {
+func makeRainbowImage() string {
 	cols := 200
 	rows := 100
 
 	outputString := "P3\n" + strconv.Itoa(cols) + " " + strconv.Itoa(rows) + "\n255\n"
-
-	f, err := os.Create("rainbow_image.ppm")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 
 	for greenIntensityBase := rows - 1; greenIntensityBase >= 0; greenIntensityBase-- {
 		for redIntensityBase := 0; redIntensityBase < cols; redIntensityBase++ {
@@ -65,18 +73,5 @@ func makeRainbowImage() {
 			outputString += currentIntensitiesString
 		}
 	}
-
-	l, err := f.WriteString(outputString + " ")
-	if err != nil {
-		fmt.Println(err)
-		f.Close()
-		return
-	}
-	fmt.Println(l, "bytes written successfully")
-	err = f.Close()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
+	return outputString
 }
