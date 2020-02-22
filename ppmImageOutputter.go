@@ -1,9 +1,11 @@
-package goraytracer
+package main
 
 import (
 	"fmt"
 	"os"
 	"strconv"
+
+	"./vector"
 )
 
 func main() {
@@ -60,10 +62,12 @@ func makeRainbowImage() string {
 
 	for greenIntensityBase := rows - 1; greenIntensityBase >= 0; greenIntensityBase-- {
 		for redIntensityBase := 0; redIntensityBase < cols; redIntensityBase++ {
+			// Current Vector Value
+			currentBaseIntensities := vector.Vector3D{(float64(redIntensityBase) / float64(cols)), (float64(greenIntensityBase) / float64(rows)), 0.2}
 			// Calculating the appropriate Red, Green, Blue values
-			redIntensity := 255.99 * (float64(redIntensityBase) / float64(cols))
-			greenIntensity := 255.99 * (float64(greenIntensityBase) / float64(rows))
-			blueIntensity := 255.99 * 0.2
+			redIntensity := 255.99 * currentBaseIntensities.R()
+			greenIntensity := 255.99 * currentBaseIntensities.G()
+			blueIntensity := 255.99 * currentBaseIntensities.B()
 
 			redIntensityInteger := int(redIntensity)
 			greenIntensityInteger := int(greenIntensity)
