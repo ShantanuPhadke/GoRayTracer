@@ -1,4 +1,4 @@
-package main
+package goraytracer
 
 import (
 	"fmt"
