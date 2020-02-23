@@ -51,31 +51,23 @@ func (v *Vector3D) B() float64 {
 //  Basic Mathematical Functions
 
 /*Add ... */
-func (v *Vector3D) Add(v2 Vector3D) {
-	v.E1 += v2.E1
-	v.E2 += v2.E2
-	v.E3 += v2.E3
+func (v *Vector3D) Add(v2 Vector3D) Vector3D {
+	return Vector3D{v.E1 + v2.E1, v.E2 + v2.E2, v.E3 + v2.E3}
 }
 
 /*Subtract ... */
-func (v *Vector3D) Subtract(v2 Vector3D) {
-	v.E1 -= v2.E1
-	v.E2 -= v2.E2
-	v.E3 -= v2.E3
+func (v *Vector3D) Subtract(v2 Vector3D) Vector3D {
+	return Vector3D{v.E1 - v.E1, v.E2 - v2.E2, v.E3 - v2.E3}
 }
 
 /*Multiply ... */
-func (v *Vector3D) Multiply(v2 Vector3D) {
-	v.E1 *= v2.E1
-	v.E2 *= v2.E2
-	v.E3 *= v2.E3
+func (v *Vector3D) Multiply(v2 Vector3D) Vector3D {
+	return Vector3D{v.E1 * v2.E1, v.E2 * v2.E2, v.E3 * v2.E3}
 }
 
 /*Divide ... */
-func (v *Vector3D) Divide(v2 Vector3D) {
-	v.E1 /= v2.E1
-	v.E2 /= v2.E2
-	v.E3 /= v2.E3
+func (v *Vector3D) Divide(v2 Vector3D) Vector3D {
+	return Vector3D{v.E1 / v2.E1, v.E2 / v2.E2, v.E3 / v2.E3}
 }
 
 /*DotProduct ... */
@@ -95,17 +87,13 @@ func (v *Vector3D) CrossProduct(v2 Vector3D) Vector3D {
 }
 
 /*ScalarMultiply ... */
-func (v *Vector3D) ScalarMultiply(c float64) {
-	v.E1 *= c
-	v.E2 *= c
-	v.E3 *= c
+func (v *Vector3D) ScalarMultiply(c float64) Vector3D {
+	return Vector3D{v.E1 * c, v.E2 * c, v.E3 * c}
 }
 
 /*ScalarDivide ... */
-func (v *Vector3D) ScalarDivide(c float64) {
-	v.E1 /= c
-	v.E2 /= c
-	v.E3 /= c
+func (v *Vector3D) ScalarDivide(c float64) Vector3D {
+	return Vector3D{v.E1 / c, v.E2 / c, v.E3 / c}
 }
 
 /*Length ... */

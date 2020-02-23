@@ -46,16 +46,16 @@ func TestVector(t *testing.T) {
 		sampleVector1 := Vector3D{1.0, 1.5, 2.5}
 		sampleVector2 := Vector3D{2.0, 2.1, 2.3}
 		expectedResult := Vector3D{3.0, 3.6, 4.8}
-		sampleVector1.Add(sampleVector2)
-		assertFloatVectorsEqual(t, expectedResult, sampleVector1)
+		actualResult := sampleVector1.Add(sampleVector2)
+		assertFloatVectorsEqual(t, expectedResult, actualResult)
 	})
 
 	t.Run("Testing scalar multiplication", func(t *testing.T) {
 		sampleVector1 := Vector3D{1.0, 1.5, 2.5}
 		sampleScalar := 2.0
 		expectedResult := Vector3D{2.0, 3.0, 5.0}
-		sampleVector1.ScalarMultiply(sampleScalar)
-		assertFloatVectorsEqual(t, expectedResult, sampleVector1)
+		actualResult := sampleVector1.ScalarMultiply(sampleScalar)
+		assertFloatVectorsEqual(t, expectedResult, actualResult)
 	})
 
 	t.Run("Testing vector length calculation", func(t *testing.T) {
