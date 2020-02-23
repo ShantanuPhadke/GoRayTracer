@@ -5,12 +5,14 @@ import (
 	"os"
 	"strconv"
 
+	"./ray"
 	"./vector"
 )
 
 func main() {
 	writeToFile("simple_image.ppm", makeSimpleImage())
 	writeToFile("rainbow_image.ppm", makeRainbowImage())
+	writeToFile("background_image.ppm", makeBackgroundImage())
 }
 
 /* writeToFile ... Generalized function that just writes given content
@@ -63,7 +65,7 @@ func makeRainbowImage() string {
 	for greenIntensityBase := rows - 1; greenIntensityBase >= 0; greenIntensityBase-- {
 		for redIntensityBase := 0; redIntensityBase < cols; redIntensityBase++ {
 			// Current Vector Value
-			currentBaseIntensities := vector.Vector3D{(float64(redIntensityBase) / float64(cols)), (float64(greenIntensityBase) / float64(rows)), 0.2}
+			currentBaseIntensities := vector.Vector3D{E1: (float64(redIntensityBase) / float64(cols)), E2: (float64(greenIntensityBase) / float64(rows)), E3: 0.2}
 			// Calculating the appropriate Red, Green, Blue values
 			redIntensity := 255.99 * currentBaseIntensities.R()
 			greenIntensity := 255.99 * currentBaseIntensities.G()
@@ -74,6 +76,56 @@ func makeRainbowImage() string {
 			blueIntensityInteger := int(blueIntensity)
 
 			currentIntensitiesString := strconv.Itoa(redIntensityInteger) + " " + strconv.Itoa(greenIntensityInteger) + " " + strconv.Itoa(blueIntensityInteger) + "\n"
+			outputString += currentIntensitiesString
+		}
+	}
+	return outputString
+}
+
+func color(r *ray.Ray) vector.Vector3D {
+	// Calculate the unit direction vector of the inputted Ray
+	directionVector := r.Direction()
+	unitDirectionVector := directionVector.MakeUnitVector()
+	// Computation for linearly blending in white and blue colors
+	t := 0.5 * (unitDirectionVector.Y() + 1.0)
+	vectorA := vector.Vector3D{E1: 1.0, E2: 1.0, E3: 1.0}
+	vectorB := vector.Vector3D{E1: 0.5, E2: 0.7, E3: 1.0}
+	vectorAt := vectorA.ScalarMultiply(1 - t)
+	vectorBt := vectorB.ScalarMultiply(t)
+	return vectorAt.Add(vectorBt)
+}
+
+func makeBackgroundImage() string {
+	rows := 100
+	cols := 200
+
+	outputString := "P3\n" + strconv.Itoa(cols) + " " + strconv.Itoa(rows) + "\n255\n"
+
+	// The 4 main 3D Vectors we will be using
+	lowerLeftCorner := vector.Vector3D{E1: -2.0, E2: -1.0, E3: -1.0}
+	horizontal := vector.Vector3D{E1: 4.0, E2: 0.0, E3: 0.0}
+	vertical := vector.Vector3D{E1: 0.0, E2: 2.0, E3: 0.0}
+	origin := vector.Vector3D{E1: 0.0, E2: 0.0, E3: 0.0}
+
+	for currentCol := cols - 1; currentCol >= 0; currentCol-- {
+		for currentRow := 0; currentRow < rows; currentRow++ {
+			horizontalVectorCoefficient := float64(currentRow) / float64(rows)
+			verticalVectorCoefficient := float64(currentCol) / float64(cols)
+
+			totalHorizontalVector := horizontal.ScalarMultiply(horizontalVectorCoefficient)
+			totalVerticalVector := vertical.ScalarMultiply(verticalVectorCoefficient)
+
+			rayAParameter := origin
+			rayBParameter := lowerLeftCorner.Add(totalHorizontalVector.Add(totalVerticalVector))
+			r := ray.Ray{A: rayAParameter, B: rayBParameter}
+
+			colorVector := color(&r)
+
+			redIntensity := int(255.99 * colorVector.E1)
+			greenIntensity := int(255.99 * colorVector.E2)
+			blueIntensity := int(255.99 * colorVector.E3)
+
+			currentIntensitiesString := strconv.Itoa(redIntensity) + " " + strconv.Itoa(greenIntensity) + " " + strconv.Itoa(blueIntensity) + "\n"
 			outputString += currentIntensitiesString
 		}
 	}
